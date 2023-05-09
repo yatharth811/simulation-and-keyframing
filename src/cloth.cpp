@@ -20,9 +20,9 @@ Cloth::Cloth(float l, float w, int _m, int _n) {
   ls[bending] = 2.0f * temp;
 
   time = 0.0f;
-  c1 = 50.0f;
-  c2 = 10.0f;
-  c3 = 1.0f;
+  cs[structural] = 50.0f;
+  cs[shear] = 10.0f;
+  cs[bending] = 1.0f;
 
   for (int i = 0; i <= n; i += 1) {
     for (int j = 0; j <= m; j += 1) {
@@ -116,64 +116,72 @@ std::vector<ClothPoint *> Cloth::bending_neighbours(ClothPoint* particle) {
     return ret;
 }
 
-void Cloth::update_points() {
-  glm::vec3 force(0.0f);
-  float delta = 1e-6;
-  glm::vec3 gravity(0.0f, -9.81f, 0.0f);
 
-  std::vector<glm::vec3> newPosition(totalVertices);
-  for (int i = 0; i < totalVertices; i += 1) {
-    if (!particles[i]->isFixed) {
-      glm::vec3 currentPoint = particles[i]->position;
+void Cloth::update_points(){
+  glm::vec3 force(0.0f);
+  float delta = 1e-3;
+
+  glm::vec3 gravity(0.0f,-9.81f,0.0f);
+  std::vector<glm::vec3> newPositions(totalVertices);
+
+  for(int i=0; i<totalVertices; i++){
+    if(!particles[i]->isFixed){
+
+      glm::vec3 currentPosition = particles[i]->position;
       glm::vec3 currentVelocity = particles[i]->velocity;
 
-      force += mass * gravity;
-      
+      // Gravitational Force
+      force += mass*gravity; 
+
       // Structural Spring Force
       std::vector<ClothPoint*> structural_springs = structural_neighbours(particles[i]);
-      for (auto &i : structural_springs) {
-        glm::vec3 x = i->position - currentPoint;
-        glm::vec3 diff_vel = currentVelocity - i->velocity;
-        force += glm::normalize(x) * (ks[structural] * (glm::length(x) - ls[structural]));
-        force += (-c1) * (glm::dot(diff_vel, glm::normalize(x))) * glm::normalize(x);
+      for(auto &i : structural_springs){
+          glm::vec3 x = i->position-currentPosition;
+          glm::vec3 diff_vel = currentVelocity - i->velocity;
+          force += glm::normalize(x)*(ks[structural] * (glm::length(x) - ls[structural]));
+          force -= cs[structural] * (glm::dot(diff_vel, glm::normalize(x))) * glm::normalize(x);
       }
 
       // Shear Spring Force
       std::vector<ClothPoint*> shear_springs = shear_neighbours(particles[i]);
-      for (auto &i : shear_springs) {
-        glm::vec3 x = i->position - currentPoint;
-        glm::vec3 diff_vel = currentVelocity - i->velocity;
-        force += glm::normalize(x) * (ks[shear] * (glm::length(x) - ls[shear]));
-        force += (-c2) * (glm::dot(diff_vel, glm::normalize(x))) * glm::normalize(x);
+      for(auto &i : shear_springs){
+          glm::vec3 x = i->position - currentPosition;
+          glm::vec3 diff_vel = currentVelocity - i->velocity;
+          force += glm::normalize(x) * (ks[shear] * (glm::length(x) - ls[shear]));
+          force -= cs[shear] * (glm::dot(diff_vel, glm::normalize(x))) * glm::normalize(x);
       }
 
-      // Bending Spring Force
-      std::vector<ClothPoint*> bending_springs = bending_neighbours(particles[i]);
-      for (auto &i : bending_springs) {
-        glm::vec3 x = i->position - currentPoint;
-        glm::vec3 diff_vel = currentVelocity - i->velocity;
-        force += glm::normalize(x)*(ks[bending] * (glm::length(x) - ls[bending]));
-        force += (-c3) * (glm::dot(diff_vel, glm::normalize(x))) * glm::normalize(x);
+      // Bend Spring Force
+      std::vector<ClothPoint*> bend_springs = bending_neighbours(particles[i]);
+      for(auto &i : bend_springs){
+          glm::vec3 x = i->position-currentPosition;
+          glm::vec3 diff_vel = currentVelocity - i->velocity;
+          force += glm::normalize(x) * (ks[bending] * (glm::length(x) - ls[bending]));
+          force -= cs[bending] * (glm::dot(diff_vel, glm::normalize(x))) * glm::normalize(x);
       }
 
       // Damping Force
-      // force -= particles[i]->velocity * damping_constant;
-      
+      // force -= particles[i]->velocity * (damping_constant);
+
       // Particles Acceleration
-      particles[i]->acceleration = force / mass;
-
-      // Updating Velocity
-      particles[i]->velocity += particles[i]->acceleration * delta;  
-
-      // Updating Position
-      particles[i]->position += particles[i]->velocity * delta;
-
-      // reset force
+      particles[i]->acceleration = force/mass;
+      
       force = glm::vec3(0.0f);
-    
+
     }
   }
-  
+
+  for(int i=0; i<totalVertices; i++){
+    if(!particles[i]->isFixed){
+      // Updating Velocity
+      particles[i]->velocity = particles[i]->velocity + (particles[i]->acceleration*delta);
+
+      // Updating Position
+      particles[i]->position = particles[i]->position + (particles[i]->velocity*delta);
+    }
+  }
+
   time += delta;
 
 }
+

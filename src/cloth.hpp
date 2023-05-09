@@ -16,8 +16,8 @@ class Cloth {
     float mass;
     float ks[3];
     float ls[3];
+    float cs[3];
     float time;
-    float c1, c2, c3;
     
     // Constructor
     Cloth(float l, float w, int _m, int _n);

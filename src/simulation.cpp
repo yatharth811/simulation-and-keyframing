@@ -49,6 +49,7 @@ int main() {
 
 	while (!r.shouldQuit()) {
 		
+    updateScene(pashmina);
 
 		camCtl.update();
 		Camera &camera = camCtl.camera;
@@ -72,7 +73,6 @@ int main() {
 		r.setUniform(program, "objectColor", vec3(0.0f, 0.0f, 0.0f));
 		r.drawObject(object);
 
-    updateScene(pashmina);
 
 		r.show();
 	}
