@@ -173,6 +173,9 @@ void Cloth::update_points(){
 
   for(int i=0; i<totalVertices; i++){
     if(!particles[i]->isFixed){
+      // Old Position
+      particles[i]->old_pos = particles[i] -> position;
+
       // Updating Velocity
       particles[i]->velocity = particles[i]->velocity + (particles[i]->acceleration*delta);
 
@@ -182,6 +185,60 @@ void Cloth::update_points(){
   }
 
   time += delta;
+
+}
+
+void Cloth::update_pbd_points() {
+  std::set<std::pair<ClothPoint *,ClothPoint *>> constraints;
+  
+  // Structural Constraints
+  for(int i=0; i<totalVertices; i++){
+    std::vector<ClothPoint*> structural_springs = structural_neighbours(particles[i]);
+    for(auto &j : structural_springs){
+      std::pair<ClothPoint*,ClothPoint*> p1(j, particles[i]), p2(particles[i], j);
+      if(constraints.find(p1) == constraints.end() && constraints.find(p2) == constraints.end()){
+        constraints.insert(p1);
+      }
+    }
+  }
+
+  // Updating all velocities and position according to ext forces
+  update_points();
+
+  // Projecting Constraints
+  for(int i=0; i<3; i++){
+    for(auto &i : constraints){
+      ClothPoint *p1 = i.first, *p2 = i.second;
+      if(p1->isFixed && p2->isFixed){
+        continue;
+      }
+      else if(p1->isFixed){
+        glm::vec3 dp2 = (1 - (ls[structural]/glm::length(p1->position-p2->position)))*(p1->position-p2->position);
+        p2->position += dp2;
+      }
+      else if(p2->isFixed){
+        glm::vec3 dp1 = (-1 + (ls[structural]/glm::length(p1->position-p2->position)))*(p1->position-p2->position);
+        p1->position += dp1;
+      }
+      else{
+        glm::vec3 dp1 = (-1 + (ls[structural]/glm::length(p1->position-p2->position)))*(p1->position-p2->position);
+        dp1 *= 0.5;
+        glm::vec3 dp2 = (1 - (ls[structural]/glm::length(p1->position-p2->position)))*(p1->position-p2->position);
+        dp2 *= 0.5;
+        p1->position += dp1;
+        p2->position += dp2;
+      }
+    }
+  }
+
+  float delta = 1e-3;  
+  // Changing Velocities
+  for(int i=0; i<totalVertices; i++){
+    if(!particles[i]->isFixed){
+      // Updating Velocity
+      particles[i]->velocity = (particles[i]->position - particles[i]->old_pos) / delta;
+    }
+  }
 
 }
 

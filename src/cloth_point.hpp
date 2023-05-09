@@ -1,10 +1,11 @@
 #pragma once
 #include "glm/glm.hpp"
 #include "vector"
+#include "set"
 
 class ClothPoint{
   public:
-
+    glm::vec3 old_pos;
     glm::vec3 position;
     glm::vec3 velocity;
     glm::vec3 acceleration;

@@ -24,7 +24,8 @@ void initializeScene(Cloth &pashmina) {
 }
 
 void updateScene(Cloth &pashmina) {
-  pashmina.update_points();
+  // pashmina.update_points();
+  pashmina.update_pbd_points();
   glm::vec3 particles[pashmina.particles.size()];
   for (int i = 0; i < pashmina.particles.size(); i += 1) {
     particles[i] = pashmina.particles[i]->position;
