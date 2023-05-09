@@ -117,9 +117,8 @@ std::vector<ClothPoint *> Cloth::bending_neighbours(ClothPoint* particle) {
 }
 
 
-void Cloth::update_points(){
+void Cloth::update_points(float delta){
   glm::vec3 force(0.0f);
-  float delta = 1e-3;
 
   glm::vec3 gravity(0.0f,-9.81f,0.0f);
   std::vector<glm::vec3> newPositions(totalVertices);
@@ -188,7 +187,7 @@ void Cloth::update_points(){
 
 }
 
-void Cloth::update_pbd_points() {
+void Cloth::update_pbd_points(float delta) {
   std::set<std::pair<ClothPoint *,ClothPoint *>> constraints;
   
   // Structural Constraints
@@ -203,7 +202,7 @@ void Cloth::update_pbd_points() {
   }
 
   // Updating all velocities and position according to ext forces
-  update_points();
+  update_points(delta);
 
   // Projecting Constraints
   for(int i=0; i<3; i++){
@@ -231,7 +230,6 @@ void Cloth::update_pbd_points() {
     }
   }
 
-  float delta = 1e-3;  
   // Changing Velocities
   for(int i=0; i<totalVertices; i++){
     if(!particles[i]->isFixed){

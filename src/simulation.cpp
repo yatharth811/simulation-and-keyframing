@@ -23,9 +23,9 @@ void initializeScene(Cloth &pashmina) {
 	r.createTriangleIndices(object, pashmina.totalTriangles, pashmina.triangles);
 }
 
-void updateScene(Cloth &pashmina) {
-  // pashmina.update_points();
-  pashmina.update_pbd_points();
+void updateScene(Cloth &pashmina, float timestep) {
+  // pashmina.update_points(timestep);
+  pashmina.update_pbd_points(timestep);
   glm::vec3 particles[pashmina.particles.size()];
   for (int i = 0; i < pashmina.particles.size(); i += 1) {
     particles[i] = pashmina.particles[i]->position;
@@ -46,11 +46,12 @@ int main() {
 	);
 
   Cloth pashmina(1.0f, 1.0f, 25, 25);
+  float timestep = 1e-3;
 	initializeScene(pashmina);
 
 	while (!r.shouldQuit()) {
 		
-    updateScene(pashmina);
+    updateScene(pashmina, timestep);
 
 		camCtl.update();
 		Camera &camera = camCtl.camera;

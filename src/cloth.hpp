@@ -26,7 +26,7 @@ class Cloth {
     std::vector<ClothPoint*> shear_neighbours(ClothPoint* particle);
     std::vector<ClothPoint*> bending_neighbours(ClothPoint* particle);
 
-    void update_points();
-    void update_pbd_points();
+    void update_points(float delta);
+    void update_pbd_points(float delta);
 
 };
