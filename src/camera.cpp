@@ -36,7 +36,7 @@ namespace COL781 {
 
 	glm::vec3 Camera:: getViewDir() {
 		return -glm::transpose(viewMatrix)[2];
-	}
+  }	 
 
 	glm::vec3 Camera::getRightVector() {
 		return glm::transpose(viewMatrix)[0];
