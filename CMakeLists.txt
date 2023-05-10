@@ -8,11 +8,14 @@ find_package(glm REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(SDL2 REQUIRED)
 
-add_library(col781 src/hw.cpp src/camera.cpp src/cloth.cpp)
-target_link_libraries(col781 GLEW::GLEW glm OpenGL::GL SDL2::SDL2)
+add_library(col781 src/hw.cpp src/camera.cpp src/cloth.cpp src/obstacles.cpp)
+target_link_libraries(col781 GLEW::GLEW glm::glm OpenGL::GL SDL2::SDL2)
 
 add_executable(example src/example.cpp)
 target_link_libraries(example col781)
 
 add_executable(simulation src/simulation.cpp)
 target_link_libraries(simulation col781)
+
+# add_executable(collision examples/collision.cpp)
+# target_link_libraries(collision col781)

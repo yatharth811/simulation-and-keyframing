@@ -20,15 +20,16 @@ Cloth::Cloth(float l, float w, int _m, int _n) {
   ls[bending] = 2.0f * temp;
 
   time = 0.0f;
-  cs[structural] = 50.0f;
-  cs[shear] = 10.0f;
-  cs[bending] = 1.0f;
+  cs[structural] = 50.0f*4;
+  cs[shear] = 10.0f*4;
+  cs[bending] = 1.0f*4;
 
   for (int i = 0; i <= n; i += 1) {
     for (int j = 0; j <= m; j += 1) {
-      glm::vec3 v(i * temp - (l / 2), 0.5f, j * width / m);
-      bool isFixed = ((i == n || i == 0) && j == 0);
-      particles.push_back(new ClothPoint(v, glm::vec3(0.0f), isFixed, std::make_pair(i, j)));
+      glm::vec3 v(i * temp, 0.0f, j * width / m);
+      // bool isFixed = ((i == n || i == 0) && j == 0);
+      bool isFixed = false;
+      particles.push_back(new ClothPoint(mass, v, glm::vec3(0.0f), isFixed, std::make_pair(i, j)));
     }
   }
 
@@ -51,18 +52,18 @@ std::vector<ClothPoint *> Cloth::structural_neighbours(ClothPoint* particle) {
     std::vector<ClothPoint*> ret;
     int i = particle->index.first, j = particle->index.second;
 
-    if(i - 1 >= 0) {
-        ret.push_back(particles[(i-1)*(m+1)+(j)]);
-    } 
-    
     if(i + 1 <= n) {
         ret.push_back(particles[(i+1)*(m+1)+(j)]);
     }
-    
+
     if(j - 1 >= 0) {
         ret.push_back(particles[(i*(m+1))+(j-1)]);
     }
 
+    if(i - 1 >= 0) {
+        ret.push_back(particles[(i-1)*(m+1)+(j)]);
+    } 
+    
     if(j + 1 <= m){
         ret.push_back(particles[(i*(m+1))+(j+1)]);
     }
@@ -117,7 +118,24 @@ std::vector<ClothPoint *> Cloth::bending_neighbours(ClothPoint* particle) {
 }
 
 
-void Cloth::update_points(float delta){
+void Cloth::update_normal(){
+
+  for(int i=0; i<totalVertices; i++){
+    glm::vec3 tmp(0.0f), n0 = particles[i]->normal;
+    int cnt = 0;
+    auto neighbours = structural_neighbours(particles[i]);
+    for(int j=0; j<neighbours.size()-1; j++){
+      glm::vec3 n1 = neighbours[j]->normal, n2 = neighbours[j+1]->normal;
+      tmp += glm::cross(n1-n0, n2-n0);
+      cnt++;
+    }
+    particles[i]->normal = glm::normalize((1.0f/cnt)*tmp);
+  }
+
+}
+
+
+void Cloth::update_points(float delta, std::vector<obstacle*> &obstacles, bool flag){
   glm::vec3 force(0.0f);
 
   glm::vec3 gravity(0.0f,-9.81f,0.0f);
@@ -176,18 +194,30 @@ void Cloth::update_points(float delta){
       particles[i]->old_pos = particles[i] -> position;
 
       // Updating Velocity
-      particles[i]->velocity = particles[i]->velocity + (particles[i]->acceleration*delta);
+      particles[i]->velocity = 0.997f*particles[i]->velocity + (particles[i]->acceleration*delta);
 
       // Updating Position
       particles[i]->position = particles[i]->position + (particles[i]->velocity*delta);
+
+      if(flag){
+        for(auto &k : obstacles){
+          k->handle_collision(particles[i]);
+        }
+      }
+
     }
+  }
+
+  if(flag){
+    // Updating Normals
+    update_normal();
   }
 
   time += delta;
 
 }
 
-void Cloth::update_pbd_points(float delta) {
+void Cloth::update_pbd_points(float delta, std::vector<obstacle*> &obstacles, bool flag) {
   std::set<std::pair<ClothPoint *,ClothPoint *>> constraints;
   
   // Structural Constraints
@@ -202,7 +232,7 @@ void Cloth::update_pbd_points(float delta) {
   }
 
   // Updating all velocities and position according to ext forces
-  update_points(delta);
+  update_points(delta,obstacles,false);
 
   // Projecting Constraints
   for(int i=0; i<3; i++){
@@ -235,8 +265,21 @@ void Cloth::update_pbd_points(float delta) {
     if(!particles[i]->isFixed){
       // Updating Velocity
       particles[i]->velocity = (particles[i]->position - particles[i]->old_pos) / delta;
+      if(flag){
+        for(auto &k : obstacles){
+          k->handle_collision(particles[i]);
+        }
+      }
     }
   }
+
+  if(flag){
+
+    // Updating Normals
+    update_normal();
+
+  }
+
 
 }
 
