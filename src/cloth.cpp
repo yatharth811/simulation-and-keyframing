@@ -27,8 +27,8 @@ Cloth::Cloth(float l, float w, int _m, int _n) {
   for (int i = 0; i <= n; i += 1) {
     for (int j = 0; j <= m; j += 1) {
       glm::vec3 v(i * temp, 0.0f, j * width / m);
-      // bool isFixed = ((i == n || i == 0) && j == 0);
-      bool isFixed = false;
+      bool isFixed = ((i == n || i == 0) && j == 0);
+      // bool isFixed = false;
       particles.push_back(new ClothPoint(mass, v, glm::vec3(0.0f), isFixed, std::make_pair(i, j)));
     }
   }
@@ -194,7 +194,7 @@ void Cloth::update_points(float delta, std::vector<obstacle*> &obstacles, bool f
       particles[i]->old_pos = particles[i] -> position;
 
       // Updating Velocity
-      particles[i]->velocity = 0.997f*particles[i]->velocity + (particles[i]->acceleration*delta);
+      particles[i]->velocity = 0.998f*particles[i]->velocity + (particles[i]->acceleration*delta);
 
       // Updating Position
       particles[i]->position = particles[i]->position + (particles[i]->velocity*delta);

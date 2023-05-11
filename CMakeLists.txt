@@ -17,5 +17,11 @@ target_link_libraries(example col781)
 add_executable(simulation src/simulation.cpp)
 target_link_libraries(simulation col781)
 
-# add_executable(collision examples/collision.cpp)
-# target_link_libraries(collision col781)
+add_executable(collision examples/collision.cpp)
+target_link_libraries(collision col781)
+
+add_executable(cloth examples/cloth.cpp)
+target_link_libraries(cloth col781)
+
+add_executable(cloth_pbd examples/cloth_pbd.cpp)
+target_link_libraries(cloth_pbd col781)
