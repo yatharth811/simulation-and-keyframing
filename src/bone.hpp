@@ -9,7 +9,7 @@ class Bone{
     obstacle *bone_shape;
     glm::vec3 position, rotationAxis;
     std::vector<std::pair<float, float>> timeSteps;
-    float theta;
+    float theta = 0.0f, theta_prev = 0.0f;
 
     Bone() {
         parent = NULL;
@@ -31,6 +31,7 @@ class Bone{
 
     void update_time(float delta, glm::mat4 p) {
         glm::mat4 m = glm::translate(p, position);
+        glm::mat4 m_inv = glm::inverse(m);
 
         if (timeSteps.size() > 0) {
             int lastTime = ceil(timeSteps[timeSteps.size() - 1].first + 1.0f);
@@ -84,12 +85,13 @@ class Bone{
             }
         }
 
-        m = glm::rotate(m, glm::radians(theta), rotationAxis);
+        m = glm::rotate(m, glm::radians(theta-theta_prev), rotationAxis);
+        theta_prev = theta;
 
         for (auto &x : bone_shape->vertices) {
             glm::vec4 sx = glm::vec4(x, 1);
-            sx = m * sx;
-            x = glm::vec3(sx.x, sx.y, sx.z);
+            sx = m * m_inv * sx;
+            x = glm::vec3(sx);
         }
 
         for (auto &x : children) {
