@@ -48,7 +48,7 @@ int main() {
 
 	Cloth pashmina(1.0f, 1.0f, 25, 25);
 	std::vector<obstacle*> obstacles;
-	float timestep = 2*1e-3;
+	float timestep = 4e-4;
 	initializeScene(pashmina,obstacles);
 
 	while (!r.shouldQuit()) {
