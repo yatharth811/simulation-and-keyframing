@@ -9,7 +9,14 @@ class obstacle{
 
     std::vector<glm::vec3> vertices, normals;
     std::vector<glm::ivec3> triangles;
+    glm::vec3 velocity = glm::vec3(0.0f);
+    glm::vec3 center = glm::vec3(0.0f);
+
     
+    void set_velocity(const glm::vec3 &vel){
+        velocity = vel;
+    }
+    void update_pos(float time);
     virtual bool detect_collision(ClothPoint *p) const = 0;
     virtual void handle_collision(ClothPoint *p) const = 0;
 
@@ -21,9 +28,10 @@ class Sphere: public obstacle{
   public:
     int m,n;
     float radius;
-    glm::vec3 center;
     float eps = 0.5, mu = 0.3;
+    
 
+    // virtual void update_pos(float time) const override;
     virtual bool detect_collision(ClothPoint *p) const override;
     virtual void handle_collision(ClothPoint *p) const override;
 
@@ -105,5 +113,20 @@ class Plane : public obstacle{
         normal = glm::vec3(0,1,0);
     }
 
+
+};
+
+
+class Cylinder : public obstacle{
+  public:
+    float radius, length;
+    uint nLat, nLong;
+
+    float eps = 0.25f, mu = 0.3;
+
+    Cylinder(const glm::vec3 &c, float _r, float _l, uint _n1, uint _n2);
+
+    virtual bool detect_collision(ClothPoint *p) const override;
+    virtual void handle_collision(ClothPoint *p) const override;
 
 };

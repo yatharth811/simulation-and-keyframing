@@ -27,8 +27,8 @@ Cloth::Cloth(float l, float w, int _m, int _n) {
   for (int i = 0; i <= n; i += 1) {
     for (int j = 0; j <= m; j += 1) {
       glm::vec3 v(i * temp, 0.0f, j * width / m);
-      bool isFixed = ((i == n || i == 0) && j == 0);
-      // bool isFixed = false;
+      // bool isFixed = ((i == n || i == 0) && j == 0);
+      bool isFixed = false;
       particles.push_back(new ClothPoint(mass, v, glm::vec3(0.0f), isFixed, std::make_pair(i, j)));
     }
   }

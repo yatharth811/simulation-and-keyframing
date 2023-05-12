@@ -25,3 +25,6 @@ target_link_libraries(cloth col781)
 
 add_executable(cloth_pbd examples/cloth_pbd.cpp)
 target_link_libraries(cloth_pbd col781)
+
+add_executable(cylinder examples/cylinder.cpp)
+target_link_libraries(cylinder col781)
