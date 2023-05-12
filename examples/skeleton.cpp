@@ -141,7 +141,8 @@ int main() {
 	glm::vec3 u_l_leg_center = hip_center + u_l_leg_pos + glm::vec3(0,-u_l_leg_length/2,0);
 	YCylinder u_l_leg(u_l_leg_center, u_l_leg_radius, u_l_leg_length, 20, 10);
 	Bone u_l_leg_bone(&hip_bone, &u_l_leg, u_l_leg_pos, glm::vec3(1.0,0.0f,0.0f));
-	u_l_leg_bone.timeSteps = std::vector<std::pair<float, float>>{{0.5, 0.0f}, {0.6, -120.0f}, {0.7, -70.0f}, {0.8, -90.0f}, {0.9, 0.0f}};
+	// u_l_leg_bone.timeSteps = std::vector<std::pair<float, float>>{{0.5, 0.0f}, {0.6, -120.0f}, {0.7, -70.0f}, {0.8, -90.0f}, {0.9, 0.0f}};
+	u_l_leg_bone.timeSteps = std::vector<std::pair<float, float>>{{0.5, 0.0f}, {0.7, -40.0f}, {0.9, -80.0f}, {1.1, -40.0f}, {1.3, 0.0f}};
 	hip_bone.add_child(&u_l_leg_bone);
 
 
@@ -150,6 +151,8 @@ int main() {
 	glm::vec3 l_l_leg_center = u_l_leg_center + glm::vec3(0.0f,-(u_l_leg_length+l_l_leg_length)/2, 0.0f);
 	YCylinder l_l_leg(l_l_leg_center, l_l_leg_radius, l_l_leg_length, 20, 10);
 	Bone l_l_leg_bone(&u_l_leg_bone, &l_l_leg, l_l_leg_pos, glm::vec3(1.0f,0.0f,0.0f));
+	// l_l_leg_bone.theta = 30.0f;
+	// l_l_leg_bone.timeSteps = std::vector<std::pair<float, float>>{{0.5, 0.0f}, {0.6, -120.0f}, {0.7, -70.0f}, {0.8, -90.0f}, {0.9, 0.0f}};
 	u_l_leg_bone.add_child(&l_l_leg_bone);
 
 
@@ -159,6 +162,8 @@ int main() {
 	glm::vec3 u_r_leg_center = hip_center + u_r_leg_pos + glm::vec3(0,-u_r_leg_length/2,0);
 	YCylinder u_r_leg(u_r_leg_center, u_r_leg_radius, u_r_leg_length, 20, 10);
 	Bone u_r_leg_bone(&hip_bone, &u_r_leg, u_r_leg_pos, glm::vec3(1.0,0.0f,0.0f));
+	u_r_leg_bone.timeSteps = std::vector<std::pair<float, float>>{{0.5, 0.0f}, {0.7, +40.0f}, {0.9, +80.0f}, {1.1, +40.0f}, {1.3, 0.0f}};
+
 	hip_bone.add_child(&u_r_leg_bone);
 
 
@@ -171,7 +176,7 @@ int main() {
 
 
 	std::vector<obstacle*> obstacles{&hip, &u_l_leg, &l_l_leg, &u_r_leg, &l_r_leg};
-	float timestep = 2*1e-3;
+	float timestep = 5e-3;
 	initializeScene(obstacles);
 
 	float time = 0.0;

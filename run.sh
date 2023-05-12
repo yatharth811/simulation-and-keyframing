@@ -10,4 +10,4 @@ mkdir build
 cd build 
 cmake ..
 make
-./cylinder
+./skeleton
