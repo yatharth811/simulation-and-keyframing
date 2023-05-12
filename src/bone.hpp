@@ -85,14 +85,17 @@ class Bone{
             }
         }
 
-        m = glm::rotate(m, glm::radians(theta-theta_prev), rotationAxis);
+        glm::mat4 k = glm::rotate(m, glm::radians(theta-theta_prev), rotationAxis);
+        
         theta_prev = theta;
 
         for (auto &x : bone_shape->vertices) {
             glm::vec4 sx = glm::vec4(x, 1);
-            sx = m * m_inv * sx;
+            sx = k * m_inv * sx;
             x = glm::vec3(sx);
         }
+
+        m = glm::rotate(m, glm::radians(theta), rotationAxis);
 
         for (auto &x : children) {
             x->update_time(delta, m);

@@ -38,7 +38,7 @@ void initializeScene(std::vector<obstacle*> obstacles) {
 	for(int i=0; i<obstacles[1]->triangles.size(); i++){
 		new_triangles2[i] = obstacles[1]->triangles[i];
 	}
-	vertexBuf2 = r.createVertexAttribs(object3, 0, obstacles[1]->vertices.size(), new_particles2);
+	vertexBuf3 = r.createVertexAttribs(object3, 0, obstacles[1]->vertices.size(), new_particles2);
 	r.createTriangleIndices(object3, obstacles[1]->triangles.size(), new_triangles2);
 
 	///
