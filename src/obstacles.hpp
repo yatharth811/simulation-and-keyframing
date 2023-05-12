@@ -124,9 +124,26 @@ class Cylinder : public obstacle{
 
     float eps = 0.25f, mu = 0.3;
 
+    Cylinder();
     Cylinder(const glm::vec3 &c, float _r, float _l, uint _n1, uint _n2);
 
     virtual bool detect_collision(ClothPoint *p) const override;
     virtual void handle_collision(ClothPoint *p) const override;
 
 };
+
+class XCylinder : public Cylinder{
+  public:
+    XCylinder(const glm::vec3 &c, float _r, float _l, uint _n1, uint _n2);
+};
+
+class YCylinder : public Cylinder{
+  public:
+    YCylinder(const glm::vec3 &c, float _r, float _l, uint _n1, uint _n2);
+};
+
+class ZCylinder : public Cylinder{
+  public:
+    ZCylinder(const glm::vec3 &c, float _r, float _l, uint _n1, uint _n2);
+};
+

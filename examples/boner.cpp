@@ -23,7 +23,7 @@ void initializeScene(Cloth &pashmina, std::vector<obstacle*> obstacles) {
 	vertexBuf = r.createVertexAttribs(object, 0, pashmina.totalVertices, particles);
 	r.createTriangleIndices(object, pashmina.totalTriangles, pashmina.triangles);
 
-    // Sphere
+	// Sphere
 	object2 = r.createObject();
 	glm::vec3 new_particles[obstacles[0]->vertices.size()];
     for (int i = 0; i < obstacles[0]->vertices.size(); i += 1) {
@@ -37,7 +37,7 @@ void initializeScene(Cloth &pashmina, std::vector<obstacle*> obstacles) {
 	r.createTriangleIndices(object2, obstacles[0]->triangles.size(), new_triangles);
 	
 	// std::cout << obstacles[1]->triangles.size() << std::endl;
-    // Plane
+	// Plane
 	object3 = r.createObject();
 	glm::vec3 new_particles2[obstacles[1]->vertices.size()];
     for (int i = 0; i < obstacles[1]->vertices.size(); i += 1) {
@@ -50,8 +50,8 @@ void initializeScene(Cloth &pashmina, std::vector<obstacle*> obstacles) {
 	vertexBuf3 = r.createVertexAttribs(object3, 0, obstacles[1]->vertices.size(), new_particles2);
 	r.createTriangleIndices(object3, obstacles[1]->triangles.size(), new_triangles2);
 
-    // // Cylinder
-    object4 = r.createObject();
+	// // Cylinder
+	object4 = r.createObject();
 	glm::vec3 new_particles3[obstacles[2]->vertices.size()];
     for (int i = 0; i < obstacles[2]->vertices.size(); i += 1) {
       new_particles3[i] = obstacles[2]->vertices[i];
@@ -100,14 +100,14 @@ int main() {
 	Sphere s(20,20,0.25f,glm::vec3(0.5f,-0.5f,0.2f));
 	s.set_velocity(glm::vec3(0,1,0));
 	Plane p;
-    ZCylinder c(glm::vec3(0.5f, -0.5f, 0.75f), 0.1f, 1.2f, 20, 10);
+    XCylinder c(glm::vec3(0.5f, -0.5f, 0.75f), 0.1f, 1.2f, 20, 10);
 	std::vector<obstacle*> obstacles{&s,&p,&c};
 	float timestep = 2*1e-3;
 	initializeScene(pashmina,obstacles);
 
 	while (!r.shouldQuit()) {
 		
-        updateScene(pashmina, obstacles,timestep);
+		updateScene(pashmina, obstacles,timestep);
 
 		camCtl.update();
 		Camera &camera = camCtl.camera;

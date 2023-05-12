@@ -194,7 +194,7 @@ void Cloth::update_points(float delta, std::vector<obstacle*> &obstacles, bool f
       particles[i]->old_pos = particles[i] -> position;
 
       // Updating Velocity
-      particles[i]->velocity = 0.998f*particles[i]->velocity + (particles[i]->acceleration*delta);
+      particles[i]->velocity = 0.998f * particles[i]->velocity + (particles[i]->acceleration*delta);
 
       // Updating Position
       particles[i]->position = particles[i]->position + (particles[i]->velocity*delta);

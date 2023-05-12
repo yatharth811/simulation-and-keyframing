@@ -51,8 +51,8 @@ void initializeScene(Cloth &pashmina, std::vector<obstacle*> obstacles) {
 }
 
 void updateScene(Cloth &pashmina, std::vector<obstacle*> &obstacles, float timestep) {
-  // pashmina.update_points(timestep);
-	pashmina.update_pbd_points(timestep, obstacles, true);
+  pashmina.update_points(timestep, obstacles, false);
+	// pashmina.update_pbd_points(timestep, obstacles, true);
 	glm::vec3 particles[pashmina.particles.size()];
 	for (int i = 0; i < pashmina.particles.size(); i += 1) {
 		particles[i] = pashmina.particles[i]->position;
@@ -76,12 +76,12 @@ int main() {
 	Sphere s(20,20,0.25f,glm::vec3(0.5f,-0.5f,0.2f));
 	Plane p;
 	std::vector<obstacle*> obstacles{&s,&p};
-	float timestep = 2*1e-3;
+	float timestep = 4*1e-4;
 	initializeScene(pashmina,obstacles);
 
 	while (!r.shouldQuit()) {
 		
-        updateScene(pashmina, obstacles,timestep);
+		updateScene(pashmina, obstacles, timestep);
 
 		camCtl.update();
 		Camera &camera = camCtl.camera;
